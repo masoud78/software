@@ -8,4 +8,5 @@ export const prisma =
     log: ["error"],
   })
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+// همیشه کش کن — روی Vercel (serverless) بدون این کار هر درخواست یک کانکشن جدید می‌سازد
+globalForPrisma.prisma = prisma

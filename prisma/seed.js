@@ -9,10 +9,10 @@ async function main() {
   // هش کردن رمز عبور پیش‌فرض
   const hashedPassword = await bcrypt.hash("12345678", 10)
 
-  // ایجاد کاربران با نقش‌های مختلف
+  // ایجاد کاربران با upsert (اگه وجود داشت آپدیت می‌کنه، اگه نه می‌سازه)
   const admin = await prisma.user.upsert({
     where: { email: "admin@content.ir" },
-    update: {},
+    update: { password: hashedPassword },
     create: {
       name: "مدیر ارشد",
       email: "admin@content.ir",
@@ -23,7 +23,7 @@ async function main() {
 
   const manager = await prisma.user.upsert({
     where: { email: "manager@content.ir" },
-    update: {},
+    update: { password: hashedPassword },
     create: {
       name: "مدیر محتوا",
       email: "manager@content.ir",
@@ -34,7 +34,7 @@ async function main() {
 
   const writer = await prisma.user.upsert({
     where: { email: "writer@content.ir" },
-    update: {},
+    update: { password: hashedPassword },
     create: {
       name: "نویسنده محتوا",
       email: "writer@content.ir",
@@ -45,7 +45,7 @@ async function main() {
 
   const publisher = await prisma.user.upsert({
     where: { email: "publisher@content.ir" },
-    update: {},
+    update: { password: hashedPassword },
     create: {
       name: "منتشرکننده محتوا",
       email: "publisher@content.ir",
@@ -60,39 +60,45 @@ async function main() {
   console.log("   نویسنده: writer@content.ir / 12345678")
   console.log("   منتشرکننده: publisher@content.ir / 12345678")
 
-  // ایجاد کلاسترهای معنایی نمونه
-  const cluster1 = await prisma.semanticCluster.create({
-    data: {
-      name: "دیجیتال مارکتینگ",
-      description: "مجموعه مقالات مربوط به بازاریابی دیجیتال",
-      color: "#6366f1",
-    },
-  })
+  // ایجاد کلاسترهای معنایی نمونه (فقط اگه خالی باشه)
+  const existingClusters = await prisma.semanticCluster.count()
+  if (existingClusters === 0) {
+    const cluster1 = await prisma.semanticCluster.create({
+      data: {
+        name: "دیجیتال مارکتینگ",
+        description: "مجموعه مقالات مربوط به بازاریابی دیجیتال",
+        color: "#6366f1",
+      },
+    })
 
-  const cluster2 = await prisma.semanticCluster.create({
-    data: {
-      name: "سئو و تولید محتوا",
-      description: "مقالات مرتبط با بهینه‌سازی موتورهای جستجو",
-      color: "#ec4899",
-    },
-  })
+    const cluster2 = await prisma.semanticCluster.create({
+      data: {
+        name: "سئو و تولید محتوا",
+        description: "مقالات مرتبط با بهینه‌سازی موتورهای جستجو",
+        color: "#ec4899",
+      },
+    })
 
-  // کلمات کلیدی نمونه
-  await prisma.keyword.createMany({
-    data: [
-      { term: "بازاریابی دیجیتال", clusterId: cluster1.id, searchVolume: 12000, difficulty: "HIGH" },
-      { term: "تبلیغات آنلاین", clusterId: cluster1.id, searchVolume: 8000, difficulty: "MEDIUM" },
-      { term: "سئو سایت", clusterId: cluster2.id, searchVolume: 22000, difficulty: "HIGH" },
-      { term: "تولید محتوا", clusterId: cluster2.id, searchVolume: 15000, difficulty: "MEDIUM" },
-    ],
-  })
+    await prisma.keyword.createMany({
+      data: [
+        { term: "بازاریابی دیجیتال", clusterId: cluster1.id, searchVolume: 12000, difficulty: "HIGH" },
+        { term: "تبلیغات آنلاین", clusterId: cluster1.id, searchVolume: 8000, difficulty: "MEDIUM" },
+        { term: "سئو سایت", clusterId: cluster2.id, searchVolume: 22000, difficulty: "HIGH" },
+        { term: "تولید محتوا", clusterId: cluster2.id, searchVolume: 15000, difficulty: "MEDIUM" },
+      ],
+    })
+
+    console.log("✅ کلاسترها و کلمات کلیدی نمونه ایجاد شدند")
+  }
 
   // تنظیمات سیستم
-  await prisma.systemSetting.create({
-    data: { key: "app_name", value: "پلتفرم مدیریت محتوا" },
-  })
+  const existingSettings = await prisma.systemSetting.count()
+  if (existingSettings === 0) {
+    await prisma.systemSetting.create({
+      data: { key: "app_name", value: "پلتفرم مدیریت محتوا" },
+    })
+  }
 
-  console.log("✅ کلاسترها و کلمات کلیدی نمونه ایجاد شدند")
   console.log("🎉 seed کامل شد!")
 }
 
