@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser, hasRole } from "@/lib/auth-server"
+import { notifyUser, notifyRole } from "@/lib/notify"
 
 export async function POST(request, { params }) {
   const user = await getCurrentUser()
@@ -10,18 +11,16 @@ export async function POST(request, { params }) {
   }
 
   try {
-    const { assigneeId, priority, dueDate, taskTitle, taskDescription } = await request.json()
+    const { assigneeId, priority, dueDate, taskTitle, taskDescription, estimatedTime, tags } = await request.json()
 
     const brief = await prisma.brief.findUnique({ where: { id: params.id } })
     if (!brief) return NextResponse.json({ error: "بریف یافت نشد" }, { status: 404 })
 
-    // بررسی اینکه کاربر هدف نویسنده است
     const writer = await prisma.user.findUnique({ where: { id: assigneeId } })
     if (!writer || writer.role !== "WRITER") {
       return NextResponse.json({ error: "کاربر انتخاب شده نویسنده نیست" }, { status: 400 })
     }
 
-    // به‌روزرسانی بریف
     await prisma.brief.update({
       where: { id: params.id },
       data: {
@@ -31,7 +30,6 @@ export async function POST(request, { params }) {
       },
     })
 
-    // ایجاد تسک
     await prisma.task.create({
       data: {
         briefId: params.id,
@@ -41,6 +39,8 @@ export async function POST(request, { params }) {
         priority: priority || "MEDIUM",
         dueDate: dueDate ? new Date(dueDate) : null,
         status: "PENDING",
+        estimatedTime: estimatedTime ? parseInt(estimatedTime) : null,
+        tags: tags || null,
       },
     })
 
@@ -51,6 +51,16 @@ export async function POST(request, { params }) {
         action: "BRIEF_ASSIGNED",
         details: `بریف به ${writer.name} ارجاع داده شد`,
       },
+    })
+
+    // Notify the writer
+    await notifyUser({
+      userId: assigneeId,
+      title: "تسک جدید به شما ارجاع داده شد",
+      message: `«${taskTitle || brief.title}» توسط ${user.name} به شما ارجاع داده شد`,
+      type: "task",
+      link: `/writer/brief/${params.id}`,
+      briefId: params.id,
     })
 
     return NextResponse.json({ success: true })

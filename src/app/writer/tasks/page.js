@@ -13,7 +13,7 @@ export default async function WriterTasksPage() {
 
   const tasks = await prisma.task.findMany({
     where: { assigneeId: user.id },
-    include: { brief: { select: { id: true, title: true, status: true, wordCount: true, cluster: { select: { name: true, color: true } } } } },
+    include: { brief: { select: { id: true, title: true, status: true, wordCount: true } } },
     orderBy: { createdAt: "desc" },
   })
 

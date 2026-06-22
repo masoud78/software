@@ -15,7 +15,6 @@ export default async function PublisherPublishedPage() {
     where: { status: "PUBLISHED" },
     include: {
       publishedBy: { select: { name: true } },
-      cluster: { select: { name: true, color: true } },
     },
     orderBy: { publishedAt: "desc" },
   })

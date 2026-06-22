@@ -16,7 +16,6 @@ export default async function PublisherQueuePage() {
     include: {
       createdBy: { select: { name: true } },
       reviewedBy: { select: { name: true } },
-      cluster: { select: { name: true, color: true } },
     },
     orderBy: { updatedAt: "desc" },
   })

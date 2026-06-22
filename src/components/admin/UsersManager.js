@@ -6,7 +6,7 @@ import Button from "@/components/ui/Button"
 import Modal from "@/components/ui/Modal"
 import { Input, Select } from "@/components/ui/Input"
 import { toast } from "@/components/ui/Toast"
-import { toJalali } from "@/lib/utils"
+import { toJalali, toPersianDigits } from "@/lib/utils"
 import { getRoleName, getRoleColor } from "@/lib/auth"
 
 export default function UsersManager({ users, currentUserId }) {
@@ -67,7 +67,7 @@ export default function UsersManager({ users, currentUserId }) {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">مدیریت کاربران</h1>
-          <p className="text-sm text-gray-500 mt-1">{users.length.toLocaleString("fa-IR")} کاربر</p>
+          <p className="text-sm text-gray-500 mt-1">{toPersianDigits(users.length)} کاربر</p>
         </div>
         <Button icon={Plus} onClick={openCreate}>کاربر جدید</Button>
       </div>

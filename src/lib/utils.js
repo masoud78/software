@@ -63,6 +63,11 @@ export function slugify(text) {
     .toLowerCase()
 }
 
+// تبدیل اعداد انگلیسی به فارسی
+export function toPersianDigits(str) {
+  return String(str).replace(/[0-9]/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d])
+}
+
 // نام فارسی وضعیت بریف
 export function getBriefStatusName(status) {
   const names = {

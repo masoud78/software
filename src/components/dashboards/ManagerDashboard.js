@@ -1,10 +1,10 @@
 "use client"
 import Link from "next/link"
-import { FileText, Clock, PenTool, Send, CheckCircle, FolderTree, Plus, ArrowLeft } from "lucide-react"
+import { FileText, Clock, PenTool, Send, CheckCircle, Plus, ArrowLeft } from "lucide-react"
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
 import StatCard from "@/components/ui/StatCard"
-import { getBriefStatusName, getBriefStatusColor, toJalali } from "@/lib/utils"
+import { getBriefStatusName, getBriefStatusColor, toJalali, toPersianDigits } from "@/lib/utils"
 
 export default function ManagerDashboard({ user, stats, recentBriefs, writersCount }) {
   const cards = [
@@ -19,7 +19,7 @@ export default function ManagerDashboard({ user, stats, recentBriefs, writersCou
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">داشبورد مدیر محتوا</h1>
-          <p className="text-sm text-gray-500 mt-1">مدیریت بریف‌ها، کلاسترها و ارجاع تسک‌ها</p>
+          <p className="text-sm text-gray-500 mt-1">مدیریت بریف‌ها و ارجاع تسک‌ها</p>
         </div>
         <Link href="/manager/briefs/new">
           <Button icon={Plus}>ایجاد بریف جدید</Button>
@@ -52,7 +52,6 @@ export default function ManagerDashboard({ user, stats, recentBriefs, writersCou
             {recentBriefs?.map((brief) => (
               <Link key={brief.id} href={`/manager/briefs/${brief.id}`} className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                 <div className="flex items-center gap-3 min-w-0">
-                  {brief.cluster && <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: brief.cluster.color }} />}
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{brief.title}</p>
                     <p className="text-xs text-gray-400">{brief.assignedTo?.name || "بدون ارجاع"} • {toJalali(brief.createdAt)}</p>

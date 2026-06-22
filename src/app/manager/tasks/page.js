@@ -13,7 +13,7 @@ export default async function ManagerTasksPage() {
 
   const tasks = await prisma.task.findMany({
     include: {
-      brief: { select: { id: true, title: true, status: true, createdById: true, cluster: { select: { name: true, color: true } } } },
+      brief: { select: { id: true, title: true, status: true, createdById: true } },
       assignee: { select: { id: true, name: true } },
     },
     orderBy: { createdAt: "desc" },

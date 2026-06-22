@@ -23,7 +23,7 @@ export default async function WriterPage() {
     where: { assigneeId: user.id, status: { in: ["PENDING", "IN_PROGRESS"] } },
     take: 6,
     orderBy: { createdAt: "desc" },
-    include: { brief: { select: { id: true, title: true, status: true, wordCount: true, cluster: { select: { name: true, color: true } } } } },
+    include: { brief: { select: { id: true, title: true, status: true, wordCount: true } } },
   })
 
   return (

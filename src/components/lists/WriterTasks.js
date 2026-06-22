@@ -3,7 +3,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Clock, PenTool, Send, CheckCircle, AlertTriangle, FileText } from "lucide-react"
 import { Card, CardBody } from "@/components/ui/Card"
-import { getBriefStatusName, getBriefStatusColor, getPriorityName, getPriorityColor, toJalali } from "@/lib/utils"
+import { getBriefStatusName, getBriefStatusColor, getPriorityName, getPriorityColor, toJalali, toPersianDigits} from "@/lib/utils"
 
 export default function WriterTasks({ tasks }) {
   const [filter, setFilter] = useState("active")
@@ -24,14 +24,14 @@ export default function WriterTasks({ tasks }) {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">کارتابل من</h1>
-        <p className="text-sm text-gray-500 mt-1">{tasks.length.toLocaleString("fa-IR")} تسک</p>
+        <p className="text-sm text-gray-500 mt-1">{toPersianDigits(tasks.length)} تسک</p>
       </div>
 
       <div className="flex items-center gap-2">
         {tabs.map(t => (
           <button key={t.key} onClick={() => setFilter(t.key)}
             className={`rounded-xl px-4 py-2 text-sm font-medium transition-all ${filter === t.key ? "bg-brand-600 text-white" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"}`}>
-            {t.label} ({t.count.toLocaleString("fa-IR")})
+            {t.label} ({toPersianDigits(t.count)})
           </button>
         ))}
       </div>
@@ -50,13 +50,10 @@ export default function WriterTasks({ tasks }) {
                 <Card hover className="cursor-pointer">
                   <CardBody className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      {task.brief.cluster && <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: task.brief.cluster.color }} />}
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{task.brief.title}</p>
                         <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
-                          <span>{task.brief.cluster?.name || "—"}</span>
-                          <span>•</span>
-                          <span>{task.brief.wordCount?.toLocaleString("fa-IR")} کلمه</span>
+                          <span>{toPersianDigits(task.brief.wordCount)} کلمه</span>
                           <span>•</span>
                           <span>{toJalali(task.createdAt)}</span>
                           {isOverdue && <span className="text-red-500 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> عقب‌افتاده</span>}

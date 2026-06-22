@@ -14,7 +14,6 @@ export default async function AdminPage() {
   const stats = await prisma.brief.groupBy({ by: ["status"], _count: true })
   const totalUsers = await prisma.user.count()
   const totalBriefs = await prisma.brief.count()
-  const totalClusters = await prisma.semanticCluster.count()
   const publishedBriefs = await prisma.brief.count({ where: { status: "PUBLISHED" } })
   const recentActivity = await prisma.activityLog.findMany({
     take: 10,
@@ -24,7 +23,7 @@ export default async function AdminPage() {
   const recentBriefs = await prisma.brief.findMany({
     take: 5,
     orderBy: { createdAt: "desc" },
-    include: { assignedTo: { select: { name: true } }, cluster: { select: { name: true, color: true } } },
+    include: { assignedTo: { select: { name: true } } },
   })
 
   const statusBreakdown = stats.reduce((acc, s) => { acc[s.status] = s._count; return acc }, {})
@@ -32,7 +31,7 @@ export default async function AdminPage() {
   return (
     <DashboardLayout user={user}>
       <AdminDashboard
-        stats={{ totalUsers, totalBriefs, totalClusters, publishedBriefs, statusBreakdown }}
+        stats={{ totalUsers, totalBriefs, publishedBriefs, statusBreakdown }}
         recentActivity={JSON.parse(JSON.stringify(recentActivity))}
         recentBriefs={JSON.parse(JSON.stringify(recentBriefs))}
       />

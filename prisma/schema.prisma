@@ -33,41 +33,9 @@ model User {
   publishedContents   Brief[]      @relation("BriefPublisher")
   comments            Comment[]
   activityLogs        ActivityLog[]
+  notifications       Notification[]
 
   @@map("users")
-}
-
-// ============================================================
-//  کلاسترهای معنایی (Semantic Clusters)
-// ============================================================
-model SemanticCluster {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  color       String   @default("#6366f1")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  keywords    Keyword[]
-  briefs      Brief[]
-
-  @@map("semantic_clusters")
-}
-
-// ============================================================
-//  کلمات کلیدی تارگت شده
-// ============================================================
-model Keyword {
-  id           String   @id @default(cuid())
-  term         String
-  clusterId    String
-  searchVolume Int      @default(0)
-  difficulty   String   @default("MEDIUM")
-  createdAt    DateTime @default(now())
-
-  cluster      SemanticCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
-
-  @@map("keywords")
 }
 
 // ============================================================
@@ -83,7 +51,6 @@ model Brief {
   searchIntent      String   @default("INFORMATIONAL")
   targetKeywords    String
   secondaryKeywords String?
-  clusterId         String?
   wordCount         Int      @default(1500)
   toneOfVoice       String   @default("حرفه‌ای و دوستانه")
   audience          String?
@@ -116,7 +83,6 @@ model Brief {
   assignedTo        User?            @relation("BriefAssignee", fields: [assignedToId], references: [id])
   reviewedBy        User?            @relation("BriefReviewer", fields: [reviewedById], references: [id])
   publishedBy       User?            @relation("BriefPublisher", fields: [publishedById], references: [id])
-  cluster           SemanticCluster? @relation(fields: [clusterId], references: [id], onDelete: SetNull)
   tasks             Task[]
   comments          Comment[]
   activityLogs      ActivityLog[]
@@ -125,24 +91,30 @@ model Brief {
 }
 
 // ============================================================
-//  تسک‌ها
+//  تسک‌ها (enhanced)
 //  وضعیت: PENDING, IN_PROGRESS, SUBMITTED, COMPLETED, CANCELLED
 //  اولویت: LOW, MEDIUM, HIGH, URGENT
 // ============================================================
 model Task {
-  id          String   @id @default(cuid())
-  briefId     String
-  assigneeId  String
-  title       String
-  description String?
-  priority    String   @default("MEDIUM")
-  status      String   @default("PENDING")
-  dueDate     DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String    @id @default(cuid())
+  briefId       String
+  assigneeId    String
+  title         String
+  description   String?
+  priority      String    @default("MEDIUM")
+  status        String    @default("PENDING")
+  progress      Int       @default(0)
+  estimatedTime Int?      // minutes
+  tags          String?   // comma separated
+  dueDate       DateTime?
+  submittedAt   DateTime?
+  reviewedAt    DateTime?
+  reviewNotes   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  brief       Brief    @relation(fields: [briefId], references: [id], onDelete: Cascade)
-  assignee    User     @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  brief         Brief     @relation(fields: [briefId], references: [id], onDelete: Cascade)
+  assignee      User      @relation("TaskAssignee", fields: [assigneeId], references: [id])
 
   @@map("tasks")
 }
@@ -178,6 +150,25 @@ model ActivityLog {
   user      User     @relation(fields: [userId], references: [id])
 
   @@map("activity_logs")
+}
+
+// ============================================================
+//  نوتیفیکیشن‌ها
+// ============================================================
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  link      String?
+  briefId   String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
 }
 
 // ============================================================

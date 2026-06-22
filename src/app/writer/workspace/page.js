@@ -13,7 +13,6 @@ export default async function WriterWorkspacePage() {
 
   const activeBriefs = await prisma.brief.findMany({
     where: { assignedToId: user.id, status: { in: ["ASSIGNED", "IN_PROGRESS", "REJECTED"] } },
-    include: { cluster: { select: { name: true, color: true } } },
     orderBy: { updatedAt: "desc" },
   })
 

@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, FileText, Users, Settings, FolderTree,
+  LayoutDashboard, FileText, Users, Settings,
   PenTool, Send, CheckCircle, Clock, ListChecks, LogOut, Sparkles
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -13,14 +13,12 @@ const navConfig = {
     { label: "داشبورد", href: "/admin", icon: LayoutDashboard },
     { label: "کاربران", href: "/admin/users", icon: Users },
     { label: "تمام بریف‌ها", href: "/admin/briefs", icon: FileText },
-    { label: "کلاسترها", href: "/admin/clusters", icon: FolderTree },
     { label: "تنظیمات", href: "/admin/settings", icon: Settings },
   ],
   CONTENT_MANAGER: [
     { label: "داشبورد", href: "/manager", icon: LayoutDashboard },
     { label: "ایجاد بریف", href: "/manager/briefs/new", icon: PenTool },
     { label: "بریف‌ها", href: "/manager/briefs", icon: FileText },
-    { label: "کلاسترهای معنایی", href: "/manager/clusters", icon: FolderTree },
     { label: "تسک‌ها", href: "/manager/tasks", icon: ListChecks },
   ],
   WRITER: [

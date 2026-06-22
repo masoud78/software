@@ -4,7 +4,7 @@ import { Clock, PenTool, Send, CheckCircle, AlertTriangle, ArrowLeft, FileText }
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
 import StatCard from "@/components/ui/StatCard"
-import { getBriefStatusName, getBriefStatusColor, getPriorityName, getPriorityColor, toJalali } from "@/lib/utils"
+import { getBriefStatusName, getBriefStatusColor, getPriorityName, getPriorityColor, toJalali, toPersianDigits } from "@/lib/utils"
 
 export default function WriterDashboard({ user, stats, myTasks }) {
   const cards = [
@@ -24,7 +24,7 @@ export default function WriterDashboard({ user, stats, myTasks }) {
       {stats.overdue > 0 && (
         <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 flex items-center gap-3 dark:bg-amber-500/10 dark:border-amber-500/20">
           <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
-          <p className="text-sm text-amber-700 dark:text-amber-400">{stats.overdue.toLocaleString("fa-IR")} تسک از موعد تحویل گذشته است</p>
+          <p className="text-sm text-amber-700 dark:text-amber-400">{toPersianDigits(stats.overdue)} تسک از موعد تحویل گذشته است</p>
         </div>
       )}
 
@@ -52,10 +52,9 @@ export default function WriterDashboard({ user, stats, myTasks }) {
             {myTasks?.map((task) => (
               <Link key={task.id} href={`/writer/brief/${task.brief.id}`} className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                 <div className="flex items-center gap-3 min-w-0">
-                  {task.brief.cluster && <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: task.brief.cluster.color }} />}
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{task.brief.title}</p>
-                    <p className="text-xs text-gray-400">{task.brief.cluster?.name || "بدون کلاستر"} • {toJalali(task.createdAt)}</p>
+                    <p className="text-xs text-gray-400">{toJalali(task.createdAt)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">

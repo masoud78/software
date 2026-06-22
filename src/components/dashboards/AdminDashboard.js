@@ -1,15 +1,14 @@
 "use client"
 import Link from "next/link"
-import { Users, FileText, FolderTree, CheckCircle, Activity, ArrowLeft, TrendingUp } from "lucide-react"
+import { Users, FileText, CheckCircle, Activity, ArrowLeft, TrendingUp } from "lucide-react"
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card"
 import StatCard from "@/components/ui/StatCard"
-import { getBriefStatusName, getBriefStatusColor, toJalali, timeAgo } from "@/lib/utils"
+import { getBriefStatusName, getBriefStatusColor, toJalali, timeAgo, toPersianDigits } from "@/lib/utils"
 
 export default function AdminDashboard({ stats, recentActivity, recentBriefs }) {
   const cards = [
     { label: "کاربران", value: stats.totalUsers, icon: Users, color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-500/10" },
     { label: "بریف‌ها", value: stats.totalBriefs, icon: FileText, color: "text-brand-500", bg: "bg-brand-50 dark:bg-brand-500/10" },
-    { label: "کلاسترها", value: stats.totalClusters, icon: FolderTree, color: "text-pink-500", bg: "bg-pink-50 dark:bg-pink-500/10" },
     { label: "منتشر شده", value: stats.publishedBriefs, icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
   ]
 
@@ -27,7 +26,7 @@ export default function AdminDashboard({ stats, recentActivity, recentBriefs }) 
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((c, idx) => (
           <StatCard key={c.label} {...c} delay={idx * 0.08} />
         ))}
@@ -50,7 +49,7 @@ export default function AdminDashboard({ stats, recentActivity, recentBriefs }) 
                   <div key={key}>
                     <div className="flex items-center justify-between text-sm mb-1">
                       <span className="text-gray-600 dark:text-gray-400">{label}</span>
-                      <span className="font-medium text-gray-900 dark:text-gray-100">{count.toLocaleString("fa-IR")}</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{toPersianDigits(count)}</span>
                     </div>
                     <div className="h-2 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
                       <div className="h-full rounded-full bg-brand-500 transition-all" style={{ width: `${pct}%` }} />
@@ -98,9 +97,6 @@ export default function AdminDashboard({ stats, recentActivity, recentBriefs }) 
             {recentBriefs?.map((brief) => (
               <Link key={brief.id} href={`/admin/briefs`} className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                 <div className="flex items-center gap-3 min-w-0">
-                  {brief.cluster && (
-                    <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: brief.cluster.color }} />
-                  )}
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{brief.title}</p>
                     <p className="text-xs text-gray-400">{brief.assignedTo?.name || "بدون ارجاع"} • {toJalali(brief.createdAt)}</p>

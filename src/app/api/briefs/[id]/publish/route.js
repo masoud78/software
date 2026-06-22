@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser, hasRole } from "@/lib/auth-server"
+import { notifyRole } from "@/lib/notify"
 
 export async function POST(request, { params }) {
   const user = await getCurrentUser()
@@ -41,6 +42,16 @@ export async function POST(request, { params }) {
         action: "BRIEF_PUBLISHED",
         details: `محتوا منتشر شد: ${publishedUrl}`,
       },
+    })
+
+    // Notify content managers that it's published
+    await notifyRole({
+      role: "CONTENT_MANAGER",
+      title: "محتوا منتشر شد 🎉",
+      message: `«${brief.title}» توسط منتشرکننده روی سایت قرار گرفت. URL: ${publishedUrl}`,
+      type: "success",
+      link: `/manager/briefs/${params.id}`,
+      briefId: params.id,
     })
 
     return NextResponse.json({ success: true })

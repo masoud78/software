@@ -15,11 +15,9 @@ export async function GET(request) {
   if (status) where.status = status
   if (assignedToId) where.assignedToId = assignedToId
 
-  // نویسنده فقط بریف‌های خودش را می‌بیند
   if (user.role === "WRITER") {
     where.assignedToId = user.id
   }
-  // منتشرکننده فقط بریف‌های تایید شده و منتشر شده را می‌بیند
   if (user.role === "PUBLISHER") {
     where.status = { in: ["APPROVED", "PUBLISHED"] }
   }
@@ -31,7 +29,6 @@ export async function GET(request) {
       assignedTo: { select: { id: true, name: true } },
       reviewedBy: { select: { id: true, name: true } },
       publishedBy: { select: { id: true, name: true } },
-      cluster: { select: { id: true, name: true, color: true } },
     },
     orderBy: { createdAt: "desc" },
   })
@@ -50,7 +47,7 @@ export async function POST(request) {
     const body = await request.json()
     const {
       title, topic, searchIntent, targetKeywords, secondaryKeywords,
-      clusterId, wordCount, toneOfVoice, audience, outline, checklist,
+      wordCount, toneOfVoice, audience, outline, checklist,
       guidelines, internalLinks, externalLinks, competitorUrls, deadline,
     } = body
 
@@ -68,7 +65,6 @@ export async function POST(request) {
         searchIntent: searchIntent || "INFORMATIONAL",
         targetKeywords: targetKeywords || "",
         secondaryKeywords: secondaryKeywords || "",
-        clusterId: clusterId || null,
         wordCount: parseInt(wordCount) || 1500,
         toneOfVoice: toneOfVoice || "حرفه‌ای و دوستانه",
         audience: audience || null,
@@ -84,13 +80,12 @@ export async function POST(request) {
       },
     })
 
-    // لاگ فعالیت
     await prisma.activityLog.create({
       data: {
         briefId: brief.id,
         userId: user.id,
         action: "BRIEF_CREATED",
-        details: `بریف "${title}" ایجاد شد`,
+        details: `بریف «${title}» ایجاد شد`,
       },
     })
 

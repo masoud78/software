@@ -60,37 +60,6 @@ async function main() {
   console.log("   نویسنده: writer@content.ir / 12345678")
   console.log("   منتشرکننده: publisher@content.ir / 12345678")
 
-  // ایجاد کلاسترهای معنایی نمونه (فقط اگه خالی باشه)
-  const existingClusters = await prisma.semanticCluster.count()
-  if (existingClusters === 0) {
-    const cluster1 = await prisma.semanticCluster.create({
-      data: {
-        name: "دیجیتال مارکتینگ",
-        description: "مجموعه مقالات مربوط به بازاریابی دیجیتال",
-        color: "#6366f1",
-      },
-    })
-
-    const cluster2 = await prisma.semanticCluster.create({
-      data: {
-        name: "سئو و تولید محتوا",
-        description: "مقالات مرتبط با بهینه‌سازی موتورهای جستجو",
-        color: "#ec4899",
-      },
-    })
-
-    await prisma.keyword.createMany({
-      data: [
-        { term: "بازاریابی دیجیتال", clusterId: cluster1.id, searchVolume: 12000, difficulty: "HIGH" },
-        { term: "تبلیغات آنلاین", clusterId: cluster1.id, searchVolume: 8000, difficulty: "MEDIUM" },
-        { term: "سئو سایت", clusterId: cluster2.id, searchVolume: 22000, difficulty: "HIGH" },
-        { term: "تولید محتوا", clusterId: cluster2.id, searchVolume: 15000, difficulty: "MEDIUM" },
-      ],
-    })
-
-    console.log("✅ کلاسترها و کلمات کلیدی نمونه ایجاد شدند")
-  }
-
   // تنظیمات سیستم
   const existingSettings = await prisma.systemSetting.count()
   if (existingSettings === 0) {

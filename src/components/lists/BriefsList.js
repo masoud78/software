@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Search, FileText, Plus, Filter } from "lucide-react"
 import { Card, CardBody } from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
-import { getBriefStatusName, getBriefStatusColor, toJalali } from "@/lib/utils"
+import { getBriefStatusName, getBriefStatusColor, toJalali, toPersianDigits} from "@/lib/utils"
 
 export default function BriefsList({ briefs, basePath, showNewButton, showCreator }) {
   const [search, setSearch] = useState("")
@@ -23,7 +23,7 @@ export default function BriefsList({ briefs, basePath, showNewButton, showCreato
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">بریف‌های محتوا</h1>
-          <p className="text-sm text-gray-500 mt-1">{briefs.length.toLocaleString("fa-IR")} بریف</p>
+          <p className="text-sm text-gray-500 mt-1">{toPersianDigits(briefs.length)} بریف</p>
         </div>
         {showNewButton && (
           <Link href="/manager/briefs/new">
@@ -68,14 +68,9 @@ export default function BriefsList({ briefs, basePath, showNewButton, showCreato
               <Card hover className="cursor-pointer">
                 <CardBody className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    {brief.cluster && (
-                      <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: brief.cluster.color }} />
-                    )}
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{brief.title}</p>
                       <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
-                        <span>{brief.cluster?.name || "بدون کلاستر"}</span>
-                        <span>•</span>
                         <span>{toJalali(brief.createdAt)}</span>
                         {showCreator && brief.createdBy && (
                           <>

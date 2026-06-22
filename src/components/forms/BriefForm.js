@@ -8,8 +8,9 @@ import {
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
 import { Input, Textarea, Select } from "@/components/ui/Input"
+import PersianDatePicker from "@/components/ui/PersianDatePicker"
 import { toast } from "@/components/ui/Toast"
-import { slugify } from "@/lib/utils"
+import { slugify, toPersianDigits } from "@/lib/utils"
 
 const defaultChecklist = [
   { id: 1, text: "کلمه کلیدی اصلی در عنوان H1 استفاده شده", done: false },
@@ -24,7 +25,7 @@ const defaultChecklist = [
   { id: 10, text: "محتوا اصلاح نگارشی شده", done: false },
 ]
 
-export default function BriefForm({ clusters, userId, brief }) {
+export default function BriefForm({ userId, brief }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [activeStep, setActiveStep] = useState(1)
@@ -41,7 +42,6 @@ export default function BriefForm({ clusters, userId, brief }) {
     searchIntent: brief?.searchIntent || "INFORMATIONAL",
     targetKeywords: brief?.targetKeywords || "",
     secondaryKeywords: brief?.secondaryKeywords || "",
-    clusterId: brief?.clusterId || "",
     wordCount: brief?.wordCount || 1500,
     toneOfVoice: brief?.toneOfVoice || "حرفه‌ای و دوستانه",
     audience: brief?.audience || "",
@@ -49,7 +49,7 @@ export default function BriefForm({ clusters, userId, brief }) {
     internalLinks: brief?.internalLinks || "",
     externalLinks: brief?.externalLinks || "",
     competitorUrls: brief?.competitorUrls || "",
-    deadline: "",
+    deadline: brief?.deadline ? new Date(brief.deadline).toISOString().split("T")[0] : "",
   })
 
   const handleChange = (e) => {
@@ -94,7 +94,6 @@ export default function BriefForm({ clusters, userId, brief }) {
     try {
       const payload = {
         ...form,
-        clusterId: form.clusterId || null,
         wordCount: parseInt(form.wordCount) || 1500,
         outline: JSON.stringify(outlineItems.filter(o => o.heading)),
         checklist: checklist.filter(c => c.text),
@@ -156,7 +155,7 @@ export default function BriefForm({ clusters, userId, brief }) {
           />
         </div>
         <span className="text-xs font-medium text-gray-500 shrink-0">
-          {activeStep.toLocaleString("fa-IR")} از ۴
+          {toPersianDigits(activeStep)} از ۴
         </span>
       </div>
 
@@ -181,7 +180,7 @@ export default function BriefForm({ clusters, userId, brief }) {
               >
                 <Icon className={`w-4 h-4 transition-transform ${isActive ? "scale-110" : ""}`} />
                 <span className="hidden sm:inline">{step.label}</span>
-                <span className="sm:hidden">{step.num}</span>
+                <span className="sm:hidden">{toPersianDigits(step.num)}</span>
                 {isDone && <CheckCircle className="w-3 h-3 text-emerald-500 animate-pop" />}
               </button>
               {idx < steps.length - 1 && (
@@ -218,20 +217,14 @@ export default function BriefForm({ clusters, userId, brief }) {
                     placeholder="موضوع کلی محتوا"
                     required
                   />
-                  <Select label="کلاستر معنایی" name="clusterId" value={form.clusterId} onChange={handleChange}>
-                    <option value="">بدون کلاستر</option>
-                    {clusters?.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Select label="نوع جستجو (Search Intent)" name="searchIntent" value={form.searchIntent} onChange={handleChange}>
                     <option value="INFORMATIONAL">اطلاعاتی (Informational)</option>
                     <option value="COMMERCIAL">تجاری (Commercial)</option>
                     <option value="TRANSACTIONAL">تراکنشی (Transactional)</option>
                     <option value="NAVIGATIONAL">ناوبری (Navigational)</option>
                   </Select>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                     label="تعداد کلمات هدف"
                     name="wordCount"
@@ -240,8 +233,6 @@ export default function BriefForm({ clusters, userId, brief }) {
                     onChange={handleChange}
                     min="100"
                   />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                     label="لحن و صدای برند"
                     name="toneOfVoice"
@@ -249,6 +240,8 @@ export default function BriefForm({ clusters, userId, brief }) {
                     onChange={handleChange}
                     placeholder="مثال: حرفه‌ای و دوستانه"
                   />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                     label="مخاطب هدف"
                     name="audience"
@@ -256,14 +249,12 @@ export default function BriefForm({ clusters, userId, brief }) {
                     onChange={handleChange}
                     placeholder="مثال: مدیران مارکتینگ"
                   />
+                  <PersianDatePicker
+                    label="مهلت تحویل"
+                    value={form.deadline}
+                    onChange={(val) => setForm({ ...form, deadline: val })}
+                  />
                 </div>
-                <Input
-                  label="مهلت تحویل"
-                  name="deadline"
-                  type="date"
-                  value={form.deadline}
-                  onChange={handleChange}
-                />
               </CardBody>
             </Card>
           </div>
@@ -287,20 +278,6 @@ export default function BriefForm({ clusters, userId, brief }) {
                     className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none min-h-[80px] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                     required
                   />
-                  {form.clusterId && clusters && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {clusters.find(c => c.id === form.clusterId)?.keywords?.map(k => (
-                        <button
-                          key={k.id}
-                          type="button"
-                          onClick={() => setForm({ ...form, targetKeywords: form.targetKeywords ? form.targetKeywords + ", " + k.term : k.term })}
-                          className="text-xs rounded-lg bg-brand-50 text-brand-700 px-2.5 py-1 hover:bg-brand-100 dark:bg-brand-500/10 dark:text-brand-400 transition-colors"
-                        >
-                          + {k.term}
-                        </button>
-                      ))}
-                    </div>
-                  )}
                 </div>
                 <Input
                   label="کلمات کلیدی فرعی (LSI)"
@@ -339,7 +316,7 @@ export default function BriefForm({ clusters, userId, brief }) {
                 {outlineItems.map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3 rounded-xl border border-gray-200 p-3 dark:border-gray-700 animate-fade-in-up hover:border-brand-300 dark:hover:border-brand-500/30 transition-all group" style={{ animationDelay: `${idx * 0.05}s` }}>
                     <div className="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-sm font-bold shrink-0 dark:bg-brand-500/10 dark:text-brand-400 group-hover:scale-110 transition-transform">
-                      {(idx + 1).toLocaleString("fa-IR")}
+                      {toPersianDigits(idx + 1)}
                     </div>
                     <div className="flex-1 space-y-2">
                       <input

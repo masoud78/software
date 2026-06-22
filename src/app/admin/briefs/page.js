@@ -15,7 +15,6 @@ export default async function AdminBriefsPage() {
     include: {
       createdBy: { select: { id: true, name: true } },
       assignedTo: { select: { id: true, name: true } },
-      cluster: { select: { id: true, name: true, color: true } },
     },
     orderBy: { createdAt: "desc" },
   })

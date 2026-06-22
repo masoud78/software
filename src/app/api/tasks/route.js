@@ -18,7 +18,7 @@ export async function GET(request) {
   const tasks = await prisma.task.findMany({
     where,
     include: {
-      brief: { select: { id: true, title: true, status: true, cluster: { select: { name: true, color: true } } } },
+      brief: { select: { id: true, title: true, status: true } },
       assignee: { select: { id: true, name: true } },
     },
     orderBy: { createdAt: "desc" },

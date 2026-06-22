@@ -11,14 +11,9 @@ export default async function NewBriefPage() {
   if (!user) redirect("/login")
   if (!["ADMIN", "CONTENT_MANAGER"].includes(user.role)) redirect("/writer")
 
-  const clusters = await prisma.semanticCluster.findMany({
-    include: { keywords: true },
-    orderBy: { name: "asc" },
-  })
-
   return (
     <DashboardLayout user={user}>
-      <BriefForm clusters={JSON.parse(JSON.stringify(clusters))} userId={user.id} />
+      <BriefForm userId={user.id} />
     </DashboardLayout>
   )
 }

@@ -13,7 +13,7 @@ import { Input, Textarea, Select } from "@/components/ui/Input"
 import { toast } from "@/components/ui/Toast"
 import {
   getBriefStatusName, getBriefStatusColor, toJalali, toJalaliDateTime,
-  timeAgo, getPriorityName, getPriorityColor
+  timeAgo, getPriorityName, getPriorityColor, toPersianDigits
 } from "@/lib/utils"
 
 export default function BriefDetail({ brief, writers, userRole, userId, mode }) {
@@ -192,7 +192,7 @@ export default function BriefDetail({ brief, writers, userRole, userId, mode }) 
         </CardBody></Card>
         <Card><CardBody className="flex items-center gap-3">
           <FileText className="w-5 h-5 text-gray-400 shrink-0" />
-          <div className="min-w-0"><p className="text-xs text-gray-400">کلمات هدف</p><p className="text-sm font-medium">{brief.wordCount?.toLocaleString("fa-IR")}</p></div>
+          <div className="min-w-0"><p className="text-xs text-gray-400">کلمات هدف</p><p className="text-sm font-medium">{toPersianDigits(brief.wordCount)}</p></div>
         </CardBody></Card>
       </div>
 
@@ -219,7 +219,7 @@ export default function BriefDetail({ brief, writers, userRole, userId, mode }) 
                     placeholder="محتوای خود را اینجا بنویسید..."
                     className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm leading-7 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none min-h-[400px] resize-y dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
                   />
-                  <p className="text-xs text-gray-400 mt-1">{content.length.toLocaleString("fa-IR")} کاراکتر</p>
+                  <p className="text-xs text-gray-400 mt-1">{toPersianDigits(content.length)} کاراکتر</p>
                 </div>
               </CardBody>
             </Card>
@@ -249,7 +249,7 @@ export default function BriefDetail({ brief, writers, userRole, userId, mode }) 
                 {outline.map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <div className="w-7 h-7 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-xs font-bold shrink-0 dark:bg-brand-500/10 dark:text-brand-400">
-                      {(idx + 1).toLocaleString("fa-IR")}
+                      {toPersianDigits(idx + 1)}
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{item.heading}</p>

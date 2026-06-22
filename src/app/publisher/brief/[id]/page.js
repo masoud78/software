@@ -18,7 +18,6 @@ export default async function PublisherBriefDetailPage({ params }) {
       assignedTo: { select: { id: true, name: true } },
       reviewedBy: { select: { id: true, name: true } },
       publishedBy: { select: { id: true, name: true } },
-      cluster: { select: { id: true, name: true, color: true } },
       comments: { include: { user: { select: { id: true, name: true } } }, orderBy: { createdAt: "desc" } },
       activityLogs: { include: { user: { select: { id: true, name: true } } }, orderBy: { createdAt: "desc" }, take: 10 },
     },

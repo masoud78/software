@@ -1,7 +1,8 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Menu, X, Moon, Sun, Bell, Search } from "lucide-react"
+import { Menu, Moon, Sun } from "lucide-react"
 import Sidebar from "./Sidebar"
+import NotificationBell from "./ui/NotificationBell"
 import { ToastContainer } from "./ui/Toast"
 
 export default function DashboardLayout({ children, user }) {
@@ -52,16 +53,9 @@ export default function DashboardLayout({ children, user }) {
             <button onClick={() => setMobileOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-90">
               <Menu className="w-5 h-5" />
             </button>
-            <div className="hidden sm:flex items-center gap-2 text-sm text-gray-400">
-              <span className="pulse-dot bg-emerald-500" />
-              <span>سیستم آنلاین</span>
-            </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-all active:scale-90 relative group">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-500 rounded-full animate-pulse" />
-            </button>
+            <NotificationBell user={user} />
             <button onClick={toggleTheme} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-all active:scale-90">
               <Moon className="w-5 h-5 dark:hidden" />
               <Sun className="w-5 h-5 hidden dark:block" />

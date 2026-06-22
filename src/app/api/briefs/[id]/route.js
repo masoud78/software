@@ -13,7 +13,6 @@ export async function GET(request, { params }) {
       assignedTo: { select: { id: true, name: true, email: true } },
       reviewedBy: { select: { id: true, name: true } },
       publishedBy: { select: { id: true, name: true } },
-      cluster: { select: { id: true, name: true, color: true } },
       tasks: { include: { assignee: { select: { id: true, name: true } } } },
       comments: {
         include: { user: { select: { id: true, name: true } } },
@@ -49,7 +48,7 @@ export async function PATCH(request, { params }) {
     // فیلدهای قابل ویرایش
     const allowedFields = [
       "title", "topic", "searchIntent", "targetKeywords", "secondaryKeywords",
-      "clusterId", "wordCount", "toneOfVoice", "audience", "outline", "checklist",
+      "wordCount", "toneOfVoice", "audience", "outline", "checklist",
       "guidelines", "internalLinks", "externalLinks", "competitorUrls", "deadline",
       "content", "excerpt", "featuredImage", "publishedUrl", "publishNotes",
     ]

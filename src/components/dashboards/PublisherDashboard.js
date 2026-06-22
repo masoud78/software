@@ -3,7 +3,7 @@ import Link from "next/link"
 import { Send, CheckCircle, FileText, ArrowLeft, ExternalLink, Clock } from "lucide-react"
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card"
 import StatCard from "@/components/ui/StatCard"
-import { toJalali, timeAgo } from "@/lib/utils"
+import { toJalali, timeAgo, toPersianDigits } from "@/lib/utils"
 
 export default function PublisherDashboard({ user, stats, queue }) {
   const cards = [

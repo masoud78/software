@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
+import { toPersianDigits } from "@/lib/utils"
 
 export default function StatCard({ label, value, icon: Icon, color, bg, delay = 0 }) {
   const [displayValue, setDisplayValue] = useState(0)
@@ -41,7 +42,7 @@ export default function StatCard({ label, value, icon: Icon, color, bg, delay = 
         <div>
           <p className="text-sm text-gray-500">{label}</p>
           <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1 count-animation">
-            {displayValue.toLocaleString("fa-IR")}
+            {toPersianDigits(displayValue)}
           </p>
         </div>
         <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6", bg)}>

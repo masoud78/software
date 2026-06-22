@@ -15,7 +15,6 @@ export default async function ManagerBriefsPage() {
     where: { createdById: user.id },
     include: {
       assignedTo: { select: { id: true, name: true } },
-      cluster: { select: { id: true, name: true, color: true } },
     },
     orderBy: { createdAt: "desc" },
   })
