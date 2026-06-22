@@ -38,7 +38,6 @@ export default function LoginPage() {
       toast("با موفقیت وارد شدید", "success")
       
       const paths = {
-        ADMIN: "/admin",
         CONTENT_MANAGER: "/manager",
         WRITER: "/writer",
         PUBLISHER: "/publisher",

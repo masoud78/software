@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 export default async function WriterPage() {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
-  if (!["WRITER", "ADMIN", "CONTENT_MANAGER"].includes(user.role)) redirect("/publisher")
+  if (!["WRITER", "CONTENT_MANAGER"].includes(user.role)) redirect("/publisher")
 
   const [pending, inProgress, submitted, completed, overdue] = await Promise.all([
     prisma.task.count({ where: { assigneeId: user.id, status: "PENDING" } }),

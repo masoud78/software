@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs"
 export async function PATCH(request, { params }) {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: "احراز هویت نشده" }, { status: 401 })
-  if (!hasRole(user, ["ADMIN"])) {
+  if (!hasRole(user, ["CONTENT_MANAGER"])) {
     return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 403 })
   }
 
@@ -28,7 +28,7 @@ export async function PATCH(request, { params }) {
 export async function DELETE(request, { params }) {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: "احراز هویت نشده" }, { status: 401 })
-  if (!hasRole(user, ["ADMIN"])) {
+  if (!hasRole(user, ["CONTENT_MANAGER"])) {
     return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 403 })
   }
   if (user.id === params.id) {

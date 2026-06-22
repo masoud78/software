@@ -9,17 +9,13 @@ import { cn } from "@/lib/utils"
 import { getRoleName, getRoleColor } from "@/lib/auth"
 
 const navConfig = {
-  ADMIN: [
-    { label: "داشبورد", href: "/admin", icon: LayoutDashboard },
-    { label: "کاربران", href: "/admin/users", icon: Users },
-    { label: "تمام بریف‌ها", href: "/admin/briefs", icon: FileText },
-    { label: "تنظیمات", href: "/admin/settings", icon: Settings },
-  ],
   CONTENT_MANAGER: [
     { label: "داشبورد", href: "/manager", icon: LayoutDashboard },
     { label: "ایجاد بریف", href: "/manager/briefs/new", icon: PenTool },
     { label: "بریف‌ها", href: "/manager/briefs", icon: FileText },
     { label: "تسک‌ها", href: "/manager/tasks", icon: ListChecks },
+    { label: "کاربران", href: "/admin/users", icon: Users },
+    { label: "تنظیمات", href: "/admin/settings", icon: Settings },
   ],
   WRITER: [
     { label: "داشبورد", href: "/writer", icon: LayoutDashboard },
@@ -75,7 +71,7 @@ export default function Sidebar({ user, onNavigate }) {
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
         {navItems.map((item, idx) => {
           const Icon = item.icon
-          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href))
+          const isActive = pathname === item.href || (item.href !== "/manager" && pathname.startsWith(item.href))
           return (
             <Link
               key={item.href}

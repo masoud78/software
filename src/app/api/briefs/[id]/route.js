@@ -83,7 +83,7 @@ export async function PATCH(request, { params }) {
 export async function DELETE(request, { params }) {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: "احراز هویت نشده" }, { status: 401 })
-  if (!["ADMIN", "CONTENT_MANAGER"].includes(user.role)) {
+  if (!["CONTENT_MANAGER"].includes(user.role)) {
     return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 403 })
   }
 

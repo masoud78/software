@@ -5,26 +5,22 @@ const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || "content-platform-super-secret-key-2026"
 )
 
-// مسیرهای محافظت شده و نقش‌های مجاز
 const protectedRoutes = {
-  "/admin": ["ADMIN"],
-  "/manager": ["ADMIN", "CONTENT_MANAGER"],
-  "/writer": ["WRITER", "ADMIN", "CONTENT_MANAGER"],
-  "/publisher": ["PUBLISHER", "ADMIN"],
+  "/admin": ["CONTENT_MANAGER"],
+  "/manager": ["CONTENT_MANAGER"],
+  "/writer": ["WRITER", "CONTENT_MANAGER"],
+  "/publisher": ["PUBLISHER", "CONTENT_MANAGER"],
 }
 
-// مسیرهای عمومی (نیاز به احراز هویت ندارند)
 const publicRoutes = ["/login", "/api/auth/login", "/api/auth/logout"]
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl
 
-  // مسیرهای عمومی
   if (publicRoutes.some((r) => pathname.startsWith(r))) {
     return NextResponse.next()
   }
 
-  // مسیرهای استاتیک
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
@@ -33,7 +29,6 @@ export async function middleware(request) {
     return NextResponse.next()
   }
 
-  // بررسی مسیرهای محافظت شده
   let requiredRoles = null
   for (const [prefix, roles] of Object.entries(protectedRoutes)) {
     if (pathname.startsWith(prefix)) {
@@ -42,7 +37,6 @@ export async function middleware(request) {
     }
   }
 
-  // اگر مسیر محافظت شده است
   if (requiredRoles) {
     const token = request.cookies.get("auth_token")?.value
 
@@ -53,11 +47,8 @@ export async function middleware(request) {
     try {
       const { payload } = await jwtVerify(token, secret)
       
-      // بررسی نقش
       if (!requiredRoles.includes(payload.role)) {
-        // هدایت به داشبورد مناسب نقش کاربر
         const dashboards = {
-          ADMIN: "/admin",
           CONTENT_MANAGER: "/manager",
           WRITER: "/writer",
           PUBLISHER: "/publisher",
@@ -72,14 +63,12 @@ export async function middleware(request) {
     }
   }
 
-  // اگر در ریشه است و لاگین کرده
   if (pathname === "/") {
     const token = request.cookies.get("auth_token")?.value
     if (token) {
       try {
         const { payload } = await jwtVerify(token, secret)
         const dashboards = {
-          ADMIN: "/admin",
           CONTENT_MANAGER: "/manager",
           WRITER: "/writer",
           PUBLISHER: "/publisher",

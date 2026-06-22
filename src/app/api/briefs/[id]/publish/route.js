@@ -6,7 +6,7 @@ import { notifyRole } from "@/lib/notify"
 export async function POST(request, { params }) {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: "احراز هویت نشده" }, { status: 401 })
-  if (!hasRole(user, ["ADMIN", "PUBLISHER"])) {
+  if (!hasRole(user, ["CONTENT_MANAGER", "PUBLISHER"])) {
     return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 403 })
   }
 

@@ -39,7 +39,7 @@ export async function GET(request) {
 export async function POST(request) {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: "احراز هویت نشده" }, { status: 401 })
-  if (!hasRole(user, ["ADMIN", "CONTENT_MANAGER"])) {
+  if (!hasRole(user, ["CONTENT_MANAGER"])) {
     return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 403 })
   }
 

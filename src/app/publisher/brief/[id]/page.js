@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 export default async function PublisherBriefDetailPage({ params }) {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
-  if (!["PUBLISHER", "ADMIN"].includes(user.role)) redirect("/writer")
+  if (!["PUBLISHER", "CONTENT_MANAGER"].includes(user.role)) redirect("/writer")
 
   const brief = await prisma.brief.findUnique({
     where: { id: params.id },

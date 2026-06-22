@@ -8,14 +8,18 @@ export async function GET() {
 
   let stats = {}
 
-  if (user.role === "ADMIN") {
-    const [totalUsers, totalBriefs, publishedBriefs, activeUsers] = await Promise.all([
+  if (user.role === "CONTENT_MANAGER") {
+    const [totalUsers, totalBriefs, publishedBriefs, activeUsers, assignedBriefs, inProgress, submitted, approved] = await Promise.all([
       prisma.user.count(),
       prisma.brief.count(),
       prisma.brief.count({ where: { status: "PUBLISHED" } }),
       prisma.user.count({ where: { isActive: true } }),
+      prisma.brief.count({ where: { status: "ASSIGNED" } }),
+      prisma.brief.count({ where: { status: "IN_PROGRESS" } }),
+      prisma.brief.count({ where: { status: "SUBMITTED" } }),
+      prisma.brief.count({ where: { status: "APPROVED" } }),
     ])
-    stats = { totalUsers, totalBriefs, publishedBriefs, activeUsers }
+    stats = { totalUsers, totalBriefs, publishedBriefs, activeUsers, assignedBriefs, inProgress, submitted, approved }
 
     const statusCounts = await prisma.brief.groupBy({ by: ["status"], _count: true })
     stats.statusBreakdown = statusCounts.reduce((acc, s) => { acc[s.status] = s._count; return acc }, {})
@@ -27,22 +31,6 @@ export async function GET() {
     })
 
     stats.recentBriefs = await prisma.brief.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: { assignedTo: { select: { name: true } } },
-    })
-  } else if (user.role === "CONTENT_MANAGER") {
-    const [totalBriefs, assignedBriefs, inProgress, submitted, approved] = await Promise.all([
-      prisma.brief.count({ where: { createdById: user.id } }),
-      prisma.brief.count({ where: { createdById: user.id, status: "ASSIGNED" } }),
-      prisma.brief.count({ where: { createdById: user.id, status: "IN_PROGRESS" } }),
-      prisma.brief.count({ where: { createdById: user.id, status: "SUBMITTED" } }),
-      prisma.brief.count({ where: { createdById: user.id, status: "APPROVED" } }),
-    ])
-    stats = { totalBriefs, assignedBriefs, inProgress, submitted, approved }
-
-    stats.recentBriefs = await prisma.brief.findMany({
-      where: { createdById: user.id },
       take: 5,
       orderBy: { createdAt: "desc" },
       include: { assignedTo: { select: { name: true } } },
@@ -79,7 +67,6 @@ export async function GET() {
     })
   }
 
-  // Unread notification count for all roles
   stats.unreadNotifications = await prisma.notification.count({
     where: { userId: user.id, isRead: false },
   })

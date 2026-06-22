@@ -17,7 +17,7 @@ async function main() {
       name: "مدیر ارشد",
       email: "admin@content.ir",
       password: hashedPassword,
-      role: "ADMIN",
+      role: "CONTENT_MANAGER",
     },
   })
 
@@ -55,7 +55,7 @@ async function main() {
   })
 
   console.log("✅ کاربران ایجاد شدند:")
-  console.log("   مدیر ارشد: admin@content.ir / 12345678")
+  console.log("   مدیر محتوا (ارشد): admin@content.ir / 12345678")
   console.log("   مدیر محتوا: manager@content.ir / 12345678")
   console.log("   نویسنده: writer@content.ir / 12345678")
   console.log("   منتشرکننده: publisher@content.ir / 12345678")

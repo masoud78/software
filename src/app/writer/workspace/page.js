@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 export default async function WriterWorkspacePage() {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
-  if (!["WRITER", "ADMIN", "CONTENT_MANAGER"].includes(user.role)) redirect("/publisher")
+  if (!["WRITER", "CONTENT_MANAGER"].includes(user.role)) redirect("/publisher")
 
   const activeBriefs = await prisma.brief.findMany({
     where: { assignedToId: user.id, status: { in: ["ASSIGNED", "IN_PROGRESS", "REJECTED"] } },

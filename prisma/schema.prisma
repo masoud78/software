@@ -13,7 +13,7 @@ datasource db {
 
 // ============================================================
 //  مدل کاربر
-//  نقش‌ها: ADMIN, CONTENT_MANAGER, WRITER, PUBLISHER
+// نقش‌ها: CONTENT_MANAGER, WRITER, PUBLISHER
 // ============================================================
 model User {
   id           String   @id @default(cuid())

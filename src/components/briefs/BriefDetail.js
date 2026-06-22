@@ -148,11 +148,11 @@ export default function BriefDetail({ brief, writers, userRole, userId, mode }) 
     finally { setLoading(false) }
   }
 
-  const canAssign = (userRole === "ADMIN" || userRole === "CONTENT_MANAGER") && (brief.status === "DRAFT" || brief.status === "REJECTED")
+  const canAssign = (userRole === "CONTENT_MANAGER") && (brief.status === "DRAFT" || brief.status === "REJECTED")
   const canWrite = mode === "writer" && (brief.status === "ASSIGNED" || brief.status === "IN_PROGRESS" || brief.status === "REJECTED")
   const canSubmit = mode === "writer" && brief.assignedToId === userId && (brief.status === "ASSIGNED" || brief.status === "IN_PROGRESS" || brief.status === "REJECTED")
-  const canReview = (userRole === "ADMIN" || userRole === "CONTENT_MANAGER") && brief.status === "SUBMITTED"
-  const canPublish = (userRole === "ADMIN" || userRole === "PUBLISHER") && brief.status === "APPROVED"
+  const canReview = (userRole === "CONTENT_MANAGER") && brief.status === "SUBMITTED"
+  const canPublish = (userRole === "CONTENT_MANAGER" || userRole === "PUBLISHER") && brief.status === "APPROVED"
 
   return (
     <div className="space-y-6 animate-fade-in">

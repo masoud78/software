@@ -115,7 +115,7 @@ export default function UsersManager({ users, currentUserId }) {
           <Input label="ایمیل *" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="email@example.com" disabled={editUser} />
           <Input label={editUser ? "رمز عبور جدید (خالی = بدون تغییر)" : "رمز عبور *"} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="••••••••" />
           <Select label="نقش" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-            <option value="ADMIN">مدیر ارشد</option>
+            
             <option value="CONTENT_MANAGER">مدیر محتوا</option>
             <option value="WRITER">نویسنده</option>
             <option value="PUBLISHER">منتشرکننده</option>

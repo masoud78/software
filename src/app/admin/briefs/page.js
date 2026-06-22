@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 export default async function AdminBriefsPage() {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
-  if (user.role !== "ADMIN") redirect("/manager")
+  if (user.role !== "CONTENT_MANAGER") redirect("/manager")
 
   const briefs = await prisma.brief.findMany({
     include: {

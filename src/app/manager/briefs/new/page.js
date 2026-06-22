@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 export default async function NewBriefPage() {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
-  if (!["ADMIN", "CONTENT_MANAGER"].includes(user.role)) redirect("/writer")
+  if (!["CONTENT_MANAGER"].includes(user.role)) redirect("/writer")
 
   return (
     <DashboardLayout user={user}>

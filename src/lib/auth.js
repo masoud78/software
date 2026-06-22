@@ -8,7 +8,6 @@ export function hasRole(user, roles) {
 
 export function getDashboardPath(role) {
   const paths = {
-    ADMIN: "/admin",
     CONTENT_MANAGER: "/manager",
     WRITER: "/writer",
     PUBLISHER: "/publisher",
@@ -18,7 +17,6 @@ export function getDashboardPath(role) {
 
 export function getRoleName(role) {
   const names = {
-    ADMIN: "مدیر ارشد",
     CONTENT_MANAGER: "مدیر محتوا",
     WRITER: "نویسنده",
     PUBLISHER: "منتشرکننده",
@@ -28,7 +26,6 @@ export function getRoleName(role) {
 
 export function getRoleColor(role) {
   const colors = {
-    ADMIN: "bg-red-500/10 text-red-600 border-red-500/20",
     CONTENT_MANAGER: "bg-brand-500/10 text-brand-600 border-brand-500/20",
     WRITER: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
     PUBLISHER: "bg-amber-500/10 text-amber-600 border-amber-500/20",

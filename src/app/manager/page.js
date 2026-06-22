@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 export default async function ManagerPage() {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
-  if (!["ADMIN", "CONTENT_MANAGER"].includes(user.role)) redirect("/writer")
+  if (!["CONTENT_MANAGER"].includes(user.role)) redirect("/writer")
 
   const [totalBriefs, assignedBriefs, inProgress, submitted, approved] = await Promise.all([
     prisma.brief.count({ where: { createdById: user.id } }),

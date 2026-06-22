@@ -8,7 +8,7 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: "احراز هویت نشده" }, { status: 401 })
 
   // فقط مدیر ارشد لیست کامل کاربران را می‌بیند
-  if (user.role === "ADMIN" || user.role === "CONTENT_MANAGER") {
+  if (user.role === "CONTENT_MANAGER") {
     const users = await prisma.user.findMany({
       select: { id: true, name: true, email: true, role: true, isActive: true, createdAt: true },
       orderBy: { createdAt: "desc" },
@@ -27,7 +27,7 @@ export async function GET() {
 export async function POST(request) {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: "احراز هویت نشده" }, { status: 401 })
-  if (!hasRole(user, ["ADMIN"])) {
+  if (!hasRole(user, ["CONTENT_MANAGER"])) {
     return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 403 })
   }
 
