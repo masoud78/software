@@ -12,9 +12,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [mounted, setMounted] = useState(false)
+  const [loggedOut, setLoggedOut] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("loggedout") === "true") {
+      setLoggedOut(true)
+      setTimeout(() => setLoggedOut(false), 5000)
+    }
   }, [])
 
   const handleSubmit = async (e) => {
@@ -104,7 +110,12 @@ export default function LoginPage() {
         <div className={`card p-6 sm:p-8 ${mounted ? "animate-slide-up stagger-2" : "opacity-0"} shine-border`}>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">ورود به حساب</h2>
           <p className="text-sm text-gray-500 mb-6">برای ادامه، اطلاعات کاربری خود را وارد کنید</p>
-
+          {loggedOut && (
+            <div className="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-600 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-400 animate-bounce-in flex items-center gap-2">
+              <CheckCircle className="w-4 h-4" />
+              شما با موفقیت از حساب خارج شدید
+            </div>
+          )}
           {error && (
             <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600 dark:bg-red-500/10 dark:border-red-500/20 dark:text-red-400 animate-shake">
               {error}
