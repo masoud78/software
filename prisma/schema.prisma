@@ -1,0 +1,193 @@
+// ============================================================
+//  پلتفرم مدیریت محتوا - اسکیمای دیتابیس
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+//  مدل کاربر
+//  نقش‌ها: ADMIN, CONTENT_MANAGER, WRITER, PUBLISHER
+// ============================================================
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         String   @default("WRITER")
+  avatar       String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  briefsCreated       Brief[]      @relation("BriefCreator")
+  tasksAssigned       Task[]       @relation("TaskAssignee")
+  briefsAssigned      Brief[]      @relation("BriefAssignee")
+  reviewsDone         Brief[]      @relation("BriefReviewer")
+  publishedContents   Brief[]      @relation("BriefPublisher")
+  comments            Comment[]
+  activityLogs        ActivityLog[]
+
+  @@map("users")
+}
+
+// ============================================================
+//  کلاسترهای معنایی (Semantic Clusters)
+// ============================================================
+model SemanticCluster {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  color       String   @default("#6366f1")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  keywords    Keyword[]
+  briefs      Brief[]
+
+  @@map("semantic_clusters")
+}
+
+// ============================================================
+//  کلمات کلیدی تارگت شده
+// ============================================================
+model Keyword {
+  id           String   @id @default(cuid())
+  term         String
+  clusterId    String
+  searchVolume Int      @default(0)
+  difficulty   String   @default("MEDIUM")
+  createdAt    DateTime @default(now())
+
+  cluster      SemanticCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@map("keywords")
+}
+
+// ============================================================
+//  بریف محتوایی
+//  وضعیت‌ها: DRAFT, ASSIGNED, IN_PROGRESS, SUBMITTED,
+//  UNDER_REVIEW, APPROVED, PUBLISHED, REJECTED, ARCHIVED
+// ============================================================
+model Brief {
+  id                String   @id @default(cuid())
+  title             String
+  slug              String   @unique
+  topic             String
+  searchIntent      String   @default("INFORMATIONAL")
+  targetKeywords    String
+  secondaryKeywords String?
+  clusterId         String?
+  wordCount         Int      @default(1500)
+  toneOfVoice       String   @default("حرفه‌ای و دوستانه")
+  audience          String?
+  outline           String?
+  checklist         String?
+  guidelines        String?
+  internalLinks     String?
+  externalLinks     String?
+  competitorUrls    String?
+  status            String   @default("DRAFT")
+
+  content           String?
+  excerpt           String?
+  featuredImage     String?
+
+  publishedUrl      String?
+  publishedAt       DateTime?
+  publishNotes      String?
+
+  createdById       String
+  assignedToId      String?
+  reviewedById      String?
+  publishedById     String?
+
+  deadline          DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  createdBy         User             @relation("BriefCreator", fields: [createdById], references: [id])
+  assignedTo        User?            @relation("BriefAssignee", fields: [assignedToId], references: [id])
+  reviewedBy        User?            @relation("BriefReviewer", fields: [reviewedById], references: [id])
+  publishedBy       User?            @relation("BriefPublisher", fields: [publishedById], references: [id])
+  cluster           SemanticCluster? @relation(fields: [clusterId], references: [id], onDelete: SetNull)
+  tasks             Task[]
+  comments          Comment[]
+  activityLogs      ActivityLog[]
+
+  @@map("briefs")
+}
+
+// ============================================================
+//  تسک‌ها
+//  وضعیت: PENDING, IN_PROGRESS, SUBMITTED, COMPLETED, CANCELLED
+//  اولویت: LOW, MEDIUM, HIGH, URGENT
+// ============================================================
+model Task {
+  id          String   @id @default(cuid())
+  briefId     String
+  assigneeId  String
+  title       String
+  description String?
+  priority    String   @default("MEDIUM")
+  status      String   @default("PENDING")
+  dueDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  brief       Brief    @relation(fields: [briefId], references: [id], onDelete: Cascade)
+  assignee    User     @relation("TaskAssignee", fields: [assigneeId], references: [id])
+
+  @@map("tasks")
+}
+
+// ============================================================
+//  کامنت‌ها / بحث‌ها روی بریف
+// ============================================================
+model Comment {
+  id        String   @id @default(cuid())
+  briefId   String
+  userId    String
+  text      String
+  createdAt DateTime @default(now())
+
+  brief     Brief    @relation(fields: [briefId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("comments")
+}
+
+// ============================================================
+//  لاگ فعالیت‌ها (Audit Log)
+// ============================================================
+model ActivityLog {
+  id        String   @id @default(cuid())
+  briefId   String?
+  userId    String
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+
+  brief     Brief?   @relation(fields: [briefId], references: [id], onDelete: SetNull)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("activity_logs")
+}
+
+// ============================================================
+//  تنظیمات سیستم
+// ============================================================
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}
